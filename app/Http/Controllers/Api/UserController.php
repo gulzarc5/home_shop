@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Hash;
 use Validator;
 use App\Models\User;
 use App\Models\Address;
+use App\Models\PasswordRequest;
 use App\SmsHelper\Sms;
 use Illuminate\Support\Str;
 
@@ -527,6 +528,29 @@ class UserController extends Controller
             ];
             return response()->json($response, 200);
         }
+    }
+
+
+    public function passwordRequest($mobile)
+    {
+        $user = User::where('mobile',$mobile)->first();
+        if ($user) {
+            $password_request = new PasswordRequest();
+            $password_request->user_id = $user->id;
+            $password_request->save();
+            $response = [
+                'status' => true,
+                'message' => 'Password Request Sent Successfully We will get back to you soon',
+            ];
+            return response()->json($response, 200);
+        } else {
+            $response = [
+                'status' => false,
+                'message' => 'Sorry Your Mobile Number Is Not Registered With Us',
+            ];
+            return response()->json($response, 200);
+        }
+        
     }
 
 }

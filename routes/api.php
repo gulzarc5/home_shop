@@ -7,6 +7,9 @@ Route::group(['namespace'=>'Api'], function(){
 
     Route::get('app/load/','CategoryController@AppLoad');
     Route::get('sub/category/list/{category_id}','CategoryController@subCategoryList');
+    
+    //password Request Customer
+    Route::get('user/password/request/send/{mobile}','UserController@passwordRequest');
 
     Route::get('charges/list','CartController@chargesList');
 

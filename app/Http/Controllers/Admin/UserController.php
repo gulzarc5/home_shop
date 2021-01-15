@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use\App\Models\User;
 use\App\Models\DeliveryBoy;
+use App\Models\PasswordRequest;
 use Illuminate\Support\Facades\Hash;
 use DataTables;
 
@@ -83,7 +84,8 @@ class UserController extends Controller
         return datatables()->of(DeliveryBoy::get())
             ->addIndexColumn()
             ->addColumn('action', function($row){
-                $btn ='<a href="'.route('admin.delivery_boy_edit',['id'=>$row->id]).'" class="btn btn-warning btn-sm" target="_blank">Edit</a>';
+                $btn ='<a href="'.route('admin.delivery_boy_edit',['id'=>$row->id]).'" class="btn btn-warning btn-sm" target="_blank">Edit</a>
+                <a href="'.route('admin.delivery_password_change_form',['id'=>$row->id]).'" class="btn btn-danger btn-sm" target="_blank">Change Password</a>';
                 if ($row->status == '1') {
                     $btn .='<a href="#" class="btn btn-danger btn-sm" >Disable</a>';
                 } else {
@@ -166,5 +168,76 @@ class UserController extends Controller
         return redirect()->back()->with('message','Delivery Boy Updated Successfully');
 
     }
+
+    public function passwordRequestList(){
+        return view('admin.users.password_request_list');
+    }
+
+    public function passwordRequestListAjax(Request $request)
+    {
+        return datatables()->of(PasswordRequest::orderBy('id','desc')->get())
+            ->addIndexColumn()
+            ->addColumn('action', function($row){
+                $btn ='<a href="'.route('admin.user_edit',['id'=>$row->id]).'" class="btn btn-warning btn-xs" target="_blank">view</a>
+                <a href="'.route('admin.user_password_change_form',['user_id'=>$row->user_id,'request_id'=>$row->id]).'" class="btn btn-danger btn-xs" target="_blank">Reset Password</a>';
+                
+                return $btn;
+            })->addColumn('name', function($row){
+                return $row->customer->name;
+            })->addColumn('mobile', function($row){
+                return $row->customer->mobile;
+            })
+            ->rawColumns(['action','name','mobile'])
+            ->make(true);
+    }
+
+    public function userPasswordChangeForm($user_id,$request_id)
+    {
+        $user = User::findOrFail($user_id);
+        return view('admin.users.change_password',compact('user','request_id'));
+    }
+
+    public function userPasswordChangeSubmit(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required',
+            'request_id' => 'required',
+            'new_password'   => 'required|string|min:8|same:confirm_password'
+        ]);
+        $user_id = $request->input('user_id');
+        $request_id = $request->input('request_id');
+
+        $user = User::findOrFail($user_id);
+        $user->password = Hash::make($request->input('confirm_password'));
+        $user->save();
+
+        $password_request = PasswordRequest::findOrFail($request_id);
+        $password_request->status = 2;
+        $password_request->save();
+
+        return redirect()->back()->with('message','Password Changed Successfully');
+    }
+    public function deliveryPasswordChangeForm($user_id)
+    {
+        $user = DeliveryBoy::findOrFail($user_id);
+        return view('admin.delivery_boy.change_password',compact('user'));
+    }
+
+    public function deliveryPasswordChangeSubmit(Request $request)
+    {
+        $this->validate($request, [
+            'user_id' => 'required',
+            'new_password'   => 'required|string|min:8|same:confirm_password'
+        ]);
+        $user_id = $request->input('user_id');
+        $request_id = $request->input('request_id');
+
+        $user = DeliveryBoy::findOrFail($user_id);
+        $user->password = Hash::make($request->input('confirm_password'));
+        $user->save();
+
+        return redirect()->back()->with('message','Password Changed Successfully');
+    }
+
 
 }

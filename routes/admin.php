@@ -96,6 +96,13 @@ Route::group(['namespace' => 'Admin'],function(){
         Route::group(['prefix'=>'user'],function(){
             Route::get('list','UserController@userList')->name('admin.user_list');
             Route::get('list/ajax','UserController@userListAjax')->name('admin.user_list_ajax');
+
+            Route::get('password/request/list','UserController@passwordRequestList')->name('admin.password_request_list');
+            Route::get('password/request/list/ajax','UserController@passwordRequestListAjax')->name('admin.password_request_list_ajax');
+
+            Route::get('user/password/change/form/{user_id}/{request_id}','UserController@userPasswordChangeForm')->name('admin.user_password_change_form');
+            Route::post('user/password/change/submit','UserController@userPasswordChangeSubmit')->name('admin.user_password_change_submit');
+
             Route::get('edit/{id}','UserController@userEdit')->name('admin.user_edit');
             Route::put('update/{id}','UserController@userUpdate')->name('admin.user_update');
         });
@@ -107,6 +114,9 @@ Route::group(['namespace' => 'Admin'],function(){
             Route::post('add','UserController@deliveryBoyAdd')->name('admin.delivery_boy_add');
             Route::get('edit/{id}','UserController@deliveryBoyEdit')->name('admin.delivery_boy_edit');
             Route::put('update/{id}','UserController@deliveryBoyUpdate')->name('admin.delivery_boy_update');
+
+            Route::get('password/change/form/{id}','UserController@deliveryPasswordChangeForm')->name('admin.delivery_password_change_form');
+            Route::post('password/change/submit','UserController@deliveryPasswordChangeSubmit')->name('admin.delivery_password_change_submit');
         });
 
         Route::group(['prefix'=>'order'],function(){

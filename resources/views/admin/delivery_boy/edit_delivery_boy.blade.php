@@ -90,6 +90,7 @@
                         </div>
     	            	<div class="form-group">
                             {{ Form::submit('Submit', array('class'=>'btn btn-success')) }}
+                            <button type="button" class="btn btn-danger" onclick="window.close()">Close</button>
     	            	</div>
     	            	{{ Form::close() }}
 

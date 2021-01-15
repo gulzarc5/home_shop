@@ -89,6 +89,7 @@
                     <ul class="nav child_menu">
                       <li class="sub_menu"><a href="{{route('admin.user_list')}}">User List</a></li>
                       <li class="sub_menu"><a href="{{route('admin.delivery_boy_list')}}">Delivery Boy List</a></li>
+                      <li class="sub_menu"><a href="{{route('admin.password_request_list')}}">Password Request</a></li>
                     </ul>
                   </li>
 
